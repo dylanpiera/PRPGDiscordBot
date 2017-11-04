@@ -8,6 +8,8 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml.Serialization;
+using PRPGDiscordBot.Helpers;
+using System.Diagnostics;
 
 namespace PRPGDiscordBot.Commands
 {
@@ -20,9 +22,19 @@ namespace PRPGDiscordBot.Commands
 
     public class Commands : ModuleBase
     {
-        [Name("Debug Commands")]
+        [Group("debug")]
         public class DebugCommands : ModuleBase
         {
+            [Command("ping")]
+            public async Task Ping()
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Restart();
+                IUserMessage msg =  await Context.Channel.SendMessageAsync("Pong!");
+                await msg.ModifyAsync(x => x.Content = $"Pong! `ms{sw.ElapsedMilliseconds}`");
+                sw.Stop();
+            }
+
             [Command("getTest")]
             public async Task GetTest()
             {
@@ -31,40 +43,12 @@ namespace PRPGDiscordBot.Commands
                 string connStr = $"Server={Sneaky.DatabaseUrl};Uid={Sneaky.User};Database=PRPG;port=3306;Password={Sneaky.Password}";
                 MySqlConnection conn = new MySqlConnection(connStr);
 
-                try
-                {
-                    await msg.ModifyAsync(x => x.Content = "Connecting to Database...");
-                    await conn.OpenAsync();
-                    await msg.ModifyAsync(x => x.Content = "Succesfully established connection :white_check_mark:");
 
-                    string str = $"SELECT testdata FROM players WHERE UserID = '{Context.User.Id}'";
-                    MySqlCommand cmd = new MySqlCommand(str, conn);
+                Pokemon vector = (await conn.GetXMLFromDatabaseAsync("testdata","players",Context.User.Id)).Deserialize<Pokemon>();
 
-                    string xml = "";
+                //await msg.ModifyAsync(x => x.Content = $"The vector stored in the database is:\n{vector.ToString()}");
+                await this.Purge(vector.Name);
 
-                    using (MySqlDataReader reader = (MySqlDataReader) await cmd.ExecuteReaderAsync())
-                    {
-                        while(await reader.ReadAsync())
-                        {
-                            xml = reader.GetString(reader.GetOrdinal("testdata"));
-                        }
-                    }
-
-                    XmlSerializer xmlSerializer = new XmlSerializer(typeof(Pokemon));
-                    Pokemon vector = (Pokemon) xmlSerializer.Deserialize(new StringReader(xml));
-
-                    //await msg.ModifyAsync(x => x.Content = $"The vector stored in the database is:\n{vector.ToString()}");
-                    await this.Purge(vector.Name);
-                }
-                catch (Exception e)
-                {
-                    await Program.Log(new LogMessage(LogSeverity.Error, "Database", "error while connection to database: " + e.ToString()));
-                    await msg.ModifyAsync(x => x.Content = "Failed to establish connection to database. See console for error details. :x:");
-                }
-                finally
-                {
-                    await conn.CloseAsync();
-                }
             }
 
             [Command("setTest")]
@@ -72,8 +56,7 @@ namespace PRPGDiscordBot.Commands
             {
                 IUserMessage msg = await Context.Channel.SendMessageAsync("...");
 
-                string connStr = $"Server={Sneaky.DatabaseUrl};Uid={Sneaky.User};Database=PRPG;port=3306;Password={Sneaky.Password}";
-                MySqlConnection conn = new MySqlConnection(connStr);
+                MySqlConnection conn = DatabaseHelper.GetClosedConnection();
 
                 try
                 {
@@ -81,28 +64,19 @@ namespace PRPGDiscordBot.Commands
                     await conn.OpenAsync();
                     await msg.ModifyAsync(x => x.Content = "Succesfully established connection :white_check_mark:");
 
-                    Pokemon vector = new Pokemon() { Name = name};
+                    Pokemon pokemon = new Pokemon() { Name = name };
 
-                    XmlSerializer xmlSerializer = new XmlSerializer(vector.GetType());
 
-                    string str = "";
 
-                    using (StringWriter textWriter = new StringWriter())
-                    {
-                        xmlSerializer.Serialize(textWriter, vector);
-                        str = textWriter.ToString();
-                        //StringReader rdr = new StringReader(str);
-                        //await Program.Log((string) xmlSerializer.Deserialize(rdr));
-                    }
+                    string str = pokemon.Serialize();
 
-                    string sql = "UPDATE players SET testdata = '" + str + "' WHERE UserID = '"+ Context.User.Id.ToString() + "'";
+                    string sql = "UPDATE players SET testdata = '" + str + "' WHERE UserID = '" + Context.User.Id.ToString() + "'";
 
                     MySqlCommand cmd = new MySqlCommand(sql, conn);
                     await Program.Log((await cmd.ExecuteNonQueryAsync()).ToString());
-                    await Program.Log(xmlSerializer.Deserialize(new StringReader(str)).ToString());
                     await msg.ModifyAsync(x => x.Content = "Successfully updated database.");
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     await Program.Log(new LogMessage(LogSeverity.Error, "Database", "error while connection to database: " + e.ToString()));
                     await msg.ModifyAsync(x => x.Content = "Failed to establish connection to database. See console for error details. :x:");
@@ -183,7 +157,8 @@ namespace PRPGDiscordBot.Commands
         }
     }
 
-    internal static class FormatHelper{
+    internal static class FormatHelper
+    {
         public static string Capatalize(string input)
         {
             return input.ToCharArray()[0].ToString().ToUpper() + input.Substring(1);
