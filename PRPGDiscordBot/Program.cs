@@ -5,6 +5,8 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
+using PRPGDiscordBot.Commands;
+using PokeAPI;
 
 public class Program
 {
@@ -16,6 +18,8 @@ public class Program
 
     public async Task MainAsync()
     {
+        DataFetcher.ShouldCacheData = true;
+
         _client = new DiscordSocketClient(new DiscordSocketConfig { LogLevel = LogSeverity.Info, MessageCacheSize = 100 });
         commands = new CommandService(new CommandServiceConfig { CaseSensitiveCommands = false, LogLevel = LogSeverity.Info });
 
@@ -46,7 +50,7 @@ public class Program
         Console.WriteLine("List of Commands on boot-up:");
         foreach (CommandInfo command in commands.Commands)
         {
-            Console.WriteLine(">" + command.Name);
+            Console.WriteLine("!" + command.Name);
         }
         Console.WriteLine("---");
 
@@ -59,7 +63,7 @@ public class Program
 
         int argPos = 0;
 
-        if (!(message.HasCharPrefix('>', ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
+        if (!(message.HasCharPrefix('!', ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
 
         var context = new CommandContext(_client, message);
 
@@ -69,6 +73,20 @@ public class Program
 
     public static async Task Log(LogMessage arg)
     {
+        switch (arg.Severity)
+        {
+            case LogSeverity.Error: Console.ForegroundColor = ConsoleColor.Red; break;
+            case LogSeverity.Warning: Console.ForegroundColor = ConsoleColor.Yellow; break;
+            case LogSeverity.Debug: Console.ForegroundColor = ConsoleColor.Green; break;
+        }
+
+        await Console.Out.WriteLineAsync($"[{DateTime.Now.ToString("hh:mm:ss")}] [{arg.Severity}] [{arg.Source}] {arg.Message}");
+        Console.ForegroundColor = ConsoleColor.Gray;
+    }
+
+    public static async Task Log(string msg, string source = "Log Command", LogSeverity logSev = LogSeverity.Debug)
+    {
+        LogMessage arg = new LogMessage(logSev, source, msg);
         switch (arg.Severity)
         {
             case LogSeverity.Error: Console.ForegroundColor = ConsoleColor.Red; break;
