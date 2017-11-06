@@ -2,17 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace PRPGDiscordBot.Models
 {
     [Serializable]
-    public class Moves : IMoves, IEnumerable<IMove>, ICollection<IMove>
+    public class Moves : IEnumerable<Move>, ICollection<Move>
     {
-        private List<IMove> moves;
+        private List<Move> moves;
 
         public Moves()
         {
-            moves = new List<IMove>(4);
+            moves = new List<Move>(4);
         }
 
         #region Implementing List components.
@@ -20,7 +21,7 @@ namespace PRPGDiscordBot.Models
 
         public bool IsReadOnly => false;
 
-        public void Add(IMove item)
+        public void Add(Move item)
         {
             moves.Add(item);
         }
@@ -30,22 +31,22 @@ namespace PRPGDiscordBot.Models
             moves.Clear();
         }
 
-        public bool Contains(IMove item)
+        public bool Contains(Move item)
         {
             return moves.Contains(item);
         }
 
-        public void CopyTo(IMove[] array, int arrayIndex)
+        public void CopyTo(Move[] array, int arrayIndex)
         {
             moves.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<IMove> GetEnumerator()
+        public IEnumerator<Move> GetEnumerator()
         {
             return moves.GetEnumerator();
         }
 
-        public bool Remove(IMove item)
+        public bool Remove(Move item)
         {
             return moves.Remove(item);
         }
@@ -55,10 +56,5 @@ namespace PRPGDiscordBot.Models
             return (IEnumerator)GetEnumerator();
         }
         #endregion
-    }
-
-    public interface IMoves
-    {
-
     }
 }

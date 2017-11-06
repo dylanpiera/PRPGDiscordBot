@@ -2,12 +2,20 @@
 using System.Collections.Generic;
 using System.Text;
 using PokeAPI;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PRPGDiscordBot.Models
 {
     [Serializable]
     public class Pokemon : IPokemon
     {
+        public Pokemon()
+        {
+            ability = new Ability();
+
+        }
+
         private int id;
         private string nickname;
         private Ability ability;
@@ -79,12 +87,18 @@ namespace PRPGDiscordBot.Models
 
         public static Moves GenerateStarterMoves(PokeAPI.Pokemon p)
         {
-            //TODO: Implement
-            
-            Moves moves = new Moves
+            Moves moves = new Moves();
+
+            foreach (var x in p.Moves)
             {
-                
-            };
+                foreach (var y in x.VersionGroupDetails)
+                {
+                    if (y.VersionGroup.Name == "sun-moon" && y.LearnedAt <= 5 && y.LearnMethod.Name == "level-up")
+                    {
+                        moves.Add(new Move() {Name = x.Move.Name });
+                    }
+                }
+            }
 
             return moves;
         }

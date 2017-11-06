@@ -93,7 +93,8 @@ namespace PRPGDiscordBot.Commands
             {
                 if (await DatabaseHelper.GetClosedConnection().RegisterUser(uuid, await this.CreateStarterPokemonXMLAsync(starterName)))
                 {
-                    EmbedBuilder builder = new EmbedBuilder() { Title = "== PRPG REGISTRATION [4/4] ==", Description = $"Congratulations, you've succesfully registered!" };
+                    EmbedBuilder builder = new EmbedBuilder() { Title = "== PRPG REGISTRATION [4/4] ==", Description = $"Congratulations, you've succesfully registered!", ThumbnailUrl = $"https://img.pokemondb.net/sprites/black-white/anim/normal/{starterName.ToLower()}.gif" };
+                    await arg.Channel.SendMessageAsync("", false, builder.Build());
                 }
                 else
                 {
@@ -123,8 +124,10 @@ namespace PRPGDiscordBot.Commands
             Models.Pokemon pokemon = new Models.Pokemon() {ID = p.ID, Level = 5, PokeBallType = Models.PokeBallType.PokeBall, Form = 0, Happiness = 0, Nickname = "", Shiny = false, Status = Models.Status.None};
             pokemon.Stats = Models.Pokemon.GenerateStarterStats(p);
             pokemon.Moves = Models.Pokemon.GenerateStarterMoves(p);
+            pokemon.Ability.Name = p.Abilities[0].Ability.Name;
 
-            return "";
+            return pokemon.Serialize();
+
         }
     }
 }

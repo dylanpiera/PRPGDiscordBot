@@ -95,12 +95,25 @@ namespace PRPGDiscordBot.Helpers
 
         public static async Task<bool> RegisterUser(this MySqlConnection connection, ulong uuid, string starterXML)
         {
-            //TODO: First finish XML
-            await connection.OpenAsync();
+            bool success;
+            try
+            {
+                await connection.OpenAsync();
+                string cmdString = $"INSERT INTO Trainers (UUID, Team, Money) VALUES ('{uuid}','{starterXML}','0')";
 
-            string cmdString = $"INSERT INTO Trainers VALUES ({uuid},{starterXML},0)";
-
-            await new MySqlCommand(cmdString, connection).ExecuteNonQueryAsync();
+                await new MySqlCommand(cmdString, connection).ExecuteNonQueryAsync();
+                success = true;
+            }
+            catch (Exception e)
+            {
+                await Program.Log(e.ToString(), "Database -> Register User", LogSeverity.Error);
+                success = false;
+            }
+            finally
+            {
+                await connection.CloseAsync();
+            }
+            return success;
         }
     }
 
