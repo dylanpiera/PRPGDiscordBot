@@ -103,6 +103,11 @@ namespace PRPGDiscordBot.Helpers
 
                 await new MySqlCommand(cmdString, connection).ExecuteNonQueryAsync();
                 success = true;
+
+                if (cachedRegistry.ContainsKey(uuid))
+                    cachedRegistry[uuid] = true;
+                else
+                    cachedRegistry.Add(uuid, true);
             }
             catch (Exception e)
             {
