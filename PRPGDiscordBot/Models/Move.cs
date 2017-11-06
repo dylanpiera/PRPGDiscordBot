@@ -5,12 +5,8 @@ using System.Text;
 namespace PRPGDiscordBot.Models
 {
     [Serializable]
-    public class Move : IMove
+    public class Move
     {
-
-    }
-
-    public interface IMove
-    {
+        public string Name { get; set; }
     }
 }
