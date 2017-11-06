@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using PokeAPI;
 
 namespace PRPGDiscordBot.Models
 {
@@ -56,6 +57,37 @@ namespace PRPGDiscordBot.Models
         }
         public Item HeldItem { get => heldItem; set => heldItem = value; }
         public Moves Moves { get => moves; set => moves = value; }
+
+        public static Stats GenerateStarterStats(PokeAPI.Pokemon p)
+        {
+            Stats stats = new Stats
+            {
+                ///Calculation HP       =   (((base + IV) * 2) * level) / 100) + level + 10
+                ///Calculation other    =    (((base + IV) * 2) * level) / 100) + 5
+
+                Speed = ((((p.Stats[0].BaseValue + 31) * 2) * 5) / 100) + 5,
+                SpDef = ((((p.Stats[1].BaseValue + 31) * 2) * 5) / 100) + 5,
+                SpAtk = ((((p.Stats[2].BaseValue + 31) * 2) * 5) / 100) + 5,
+                Def = ((((p.Stats[3].BaseValue + 31) * 2) * 5) / 100) + 5,
+                Atk = ((((p.Stats[4].BaseValue + 31) * 2) * 5) / 100) + 5,
+                MaxHP = ((((p.Stats[5].BaseValue + 31) * 2) * 5) / 100) + 15
+            };
+            stats.CurHP = stats.MaxHP;
+
+            return stats;
+        }
+
+        public static Moves GenerateStarterMoves(PokeAPI.Pokemon p)
+        {
+            //TODO: Implement
+            
+            Moves moves = new Moves
+            {
+                
+            };
+
+            return moves;
+        }
     }
 
     public interface IPokemon
@@ -77,10 +109,12 @@ namespace PRPGDiscordBot.Models
     [Serializable]
     public enum Status
     {
+        None
     }
 
     [Serializable]
     public enum PokeBallType
     {
+        PokeBall
     }
 }

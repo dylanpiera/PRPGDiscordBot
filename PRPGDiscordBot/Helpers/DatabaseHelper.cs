@@ -52,6 +52,56 @@ namespace PRPGDiscordBot.Helpers
 
             return xml;
         }
+
+        public static Dictionary<ulong, bool> cachedRegistry = new Dictionary<ulong, bool>();
+
+        public static async Task<bool> IsUserRegistered(this MySqlConnection connection, ulong uuid)
+        {
+            if (cachedRegistry.ContainsKey(uuid))
+            {
+                return cachedRegistry[uuid];
+            }
+
+            bool IsRegistered = false;
+
+            try
+            {
+
+                await connection.OpenAsync();
+
+                //string cmdString = $"INSERT INTO Trainers (UUID, Money) VALUES ({uuid}, 0)";
+                string cmdString = $"SELECT COUNT(UUID) FROM Trainers WHERE UUID = '{uuid}'";
+                MySqlCommand cmd = new MySqlCommand(cmdString, connection);
+
+                using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        IsRegistered = reader.GetInt16(0) > 0 ? true : false;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                await Program.Log(new LogMessage(LogSeverity.Error, "IsRegistered", e.ToString()));
+            }
+            finally
+            {
+                await connection.CloseAsync();
+            }
+            cachedRegistry.Add(uuid, IsRegistered);
+            return IsRegistered;
+        }
+
+        public static async Task<bool> RegisterUser(this MySqlConnection connection, ulong uuid, string starterXML)
+        {
+            //TODO: First finish XML
+            await connection.OpenAsync();
+
+            string cmdString = $"INSERT INTO Trainers VALUES ({uuid},{starterXML},0)";
+
+            await new MySqlCommand(cmdString, connection).ExecuteNonQueryAsync();
+        }
     }
 
     public static class XMLHelper

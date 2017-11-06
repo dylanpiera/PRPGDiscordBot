@@ -8,46 +8,46 @@ namespace PRPGDiscordBot.Models
     [Serializable]
     public class Moves : IMoves, IEnumerable<IMove>, ICollection<IMove>
     {
-        private List<IMove> team;
+        private List<IMove> moves;
 
         public Moves()
         {
-            team = new List<IMove>(4);
+            moves = new List<IMove>(4);
         }
 
         #region Implementing List components.
-        public int Count => team.Count;
+        public int Count => moves.Count;
 
         public bool IsReadOnly => false;
 
         public void Add(IMove item)
         {
-            team.Add(item);
+            moves.Add(item);
         }
 
         public void Clear()
         {
-            team.Clear();
+            moves.Clear();
         }
 
         public bool Contains(IMove item)
         {
-            return team.Contains(item);
+            return moves.Contains(item);
         }
 
         public void CopyTo(IMove[] array, int arrayIndex)
         {
-            team.CopyTo(array, arrayIndex);
+            moves.CopyTo(array, arrayIndex);
         }
 
         public IEnumerator<IMove> GetEnumerator()
         {
-            return team.GetEnumerator();
+            return moves.GetEnumerator();
         }
 
         public bool Remove(IMove item)
         {
-            return team.Remove(item);
+            return moves.Remove(item);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
