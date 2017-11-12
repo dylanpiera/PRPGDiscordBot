@@ -92,7 +92,10 @@ namespace PRPGDiscordBot.Commands
             if (int.TryParse(msg, out int numChoice))
             {
                 if (numChoice < 0 || numChoice > AvailableStarters.Count)
+                {
+                    await (arg as IUserMessage).AddReactionAsync(new Emoji("❌"));
                     return;
+                }
 
                 string starterName = AvailableStarters[--numChoice];
 
