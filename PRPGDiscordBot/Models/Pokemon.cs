@@ -100,6 +100,9 @@ namespace PRPGDiscordBot.Models
                 }
             }
 
+            if (p.ID == 133)
+                moves.Add(new Move() { Name = "Tackle" });
+
             return moves;
         }
     }

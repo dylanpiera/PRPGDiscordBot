@@ -23,6 +23,10 @@ namespace PRPGDiscordBot.Models
 
         public void Add(Move item)
         {
+            if(this.Count >= 4)
+            {
+                moves.RemoveAt(0);
+            }
             moves.Add(item);
         }
 
