@@ -17,6 +17,7 @@ namespace PRPGDiscordBot.Commands
 
         public static readonly List<string> AvailableStarters = new List<string> { "Bulbasaur", "Squirtle", "Charmander", "Pikachu", "Eevee" };
 
+        #region RegisterCommand
         [Command("Register")]
         public async Task Register()
         {
@@ -33,6 +34,7 @@ namespace PRPGDiscordBot.Commands
             (Context.Client as DiscordSocketClient).MessageReceived += eventHandler;
         }
 
+        #region eventHandlers
         private async Task ChooseStarter(SocketMessage arg, ulong uuid)
         {
             if (arg.Author.Id != uuid)
@@ -89,7 +91,7 @@ namespace PRPGDiscordBot.Commands
             string msg = arg.Content;
             if (int.TryParse(msg, out int numChoice))
             {
-                if (numChoice < 0 || numChoice >= AvailableStarters.Count)
+                if (numChoice < 0 || numChoice > AvailableStarters.Count)
                     return;
 
                 string starterName = AvailableStarters[--numChoice];
@@ -199,6 +201,11 @@ namespace PRPGDiscordBot.Commands
             {
                 await conn.CloseAsync();
             }
+            
         }
+        #endregion 
+        #endregion
+
+
     }
 }
