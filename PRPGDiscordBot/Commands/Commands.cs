@@ -35,6 +35,19 @@ namespace PRPGDiscordBot.Commands
                 sw.Stop();
             }
 
+            [Command("nickname")]
+            public async Task NicknameValidiser([Remainder] string atr)
+            {
+                try
+                {
+                    await Context.Channel.SendMessageAsync("Your string is valid: " + (string)new Nickname(atr));
+                }
+                catch (Exception e)
+                {
+                    await Context.Channel.SendMessageAsync("Invalid string. " + e.ToString());
+                }
+            }
+
             [Command("getTest")]
             public async Task GetTest()
             {
@@ -70,9 +83,12 @@ namespace PRPGDiscordBot.Commands
 
                     string str = pokemon.Serialize();
 
-                    string sql = "UPDATE players SET testdata = '" + str + "' WHERE UserID = '" + Context.User.Id.ToString() + "'";
+                    string sql = "UPDATE players SET testdata = @pokemon WHERE UserID = '" + Context.User.Id.ToString() + "'";
 
                     MySqlCommand cmd = new MySqlCommand(sql, conn);
+
+                    cmd.Parameters.Add("@pokemon", MySqlDbType.Text).Value = str;
+
                     await Program.Log((await cmd.ExecuteNonQueryAsync()).ToString());
                     await msg.ModifyAsync(x => x.Content = "Successfully updated database.");
                 }

@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace PRPGDiscordBot.Helpers
 {
-    public static class DatabaseHelper
+    public static partial class DatabaseHelper
     {
         /// <summary>
         /// Gets you a copy of the database connection (Closed)
@@ -26,10 +26,9 @@ namespace PRPGDiscordBot.Helpers
             string xml = "";
             try
             {
-
                 await connection.OpenAsync();
 
-                string cmdString = $"SELECT {columnName} FROM {tableName} WHERE UserID = '{UUID}'";
+                string cmdString = $"SELECT {columnName} FROM {tableName} WHERE UserID = {UUID}";
                 MySqlCommand cmd = new MySqlCommand(cmdString, connection);
 
                 using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
@@ -69,7 +68,6 @@ namespace PRPGDiscordBot.Helpers
 
                 await connection.OpenAsync();
 
-                //string cmdString = $"INSERT INTO Trainers (UUID, Money) VALUES ({uuid}, 0)";
                 string cmdString = $"SELECT COUNT(UUID) FROM Trainers WHERE UUID = '{uuid}'";
                 MySqlCommand cmd = new MySqlCommand(cmdString, connection);
 
@@ -91,34 +89,6 @@ namespace PRPGDiscordBot.Helpers
             }
             cachedRegistry.Add(uuid, IsRegistered);
             return IsRegistered;
-        }
-
-        public static async Task<bool> RegisterUser(this MySqlConnection connection, ulong uuid, string starterXML)
-        {
-            bool success;
-            try
-            {
-                await connection.OpenAsync();
-                string cmdString = $"INSERT INTO Trainers (UUID, Team, Money) VALUES ('{uuid}','{starterXML}','0')";
-
-                await new MySqlCommand(cmdString, connection).ExecuteNonQueryAsync();
-                success = true;
-
-                if (cachedRegistry.ContainsKey(uuid))
-                    cachedRegistry[uuid] = true;
-                else
-                    cachedRegistry.Add(uuid, true);
-            }
-            catch (Exception e)
-            {
-                await Program.Log(e.ToString(), "Database -> Register User", LogSeverity.Error);
-                success = false;
-            }
-            finally
-            {
-                await connection.CloseAsync();
-            }
-            return success;
         }
     }
 
