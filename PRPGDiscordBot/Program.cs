@@ -5,7 +5,6 @@ using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
-using PRPGDiscordBot.Commands;
 using PokeAPI;
 
 public class Program
@@ -34,6 +33,11 @@ public class Program
         await _client.StartAsync();
 
         await Task.Delay(-1);
+    }
+
+    private Task _client_UserUpdated(SocketUser arg1, SocketUser arg2)
+    {
+        throw new NotImplementedException();
     }
 
     private async Task Ready()
