@@ -14,7 +14,7 @@ namespace PRPGDiscordBot.Helpers
             try
             {
                 await connection.OpenAsync();
-                string cmdString = $"INSERT INTO Trainers (UUID, Team, Money) VALUES ('{uuid}',@starterXML','0')";
+                string cmdString = $"INSERT INTO Trainers (UUID, Team, Money) VALUES ('{uuid}',@starterXML,'0')";
 
                 MySqlCommand cmd = new MySqlCommand(cmdString, connection);
 
