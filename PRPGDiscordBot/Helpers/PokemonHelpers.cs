@@ -63,9 +63,10 @@ namespace PRPGDiscordBot.Helpers
 
         private string Sanitize(string name)
         {
-            if(Regex.IsMatch(name, @"([^a-zA-Z0-9\s-_])+"))
+            if (Regex.IsMatch(name, @"([^a-zA-Z0-9\s-_])+"))
                 throw new FormatException("Nickname does not confirm to Sanatization rules.");
-
+            if (name.Length > 20)
+                throw new FormatException("Nickname is too long");
             return name;
         }
 
