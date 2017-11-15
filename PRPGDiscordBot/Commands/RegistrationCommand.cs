@@ -23,11 +23,18 @@ namespace PRPGDiscordBot.Commands
         {
             if (!Events.ContainsKey(Context.User.Id) && await DatabaseHelper.GetClosedConnection().IsUserRegistered(Context.User.Id))
             {
-                await Context.Channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "== PRPG REGISTRATION ==", Description = $"{(Context.User as IGuildUser).Nickname ?? Context.User.Username} you've already registered for the PRPG. :x:"});
+                await Context.Channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "== PRPG REGISTRATION ==", Description = $"{(Context.User as IGuildUser).Nickname ?? Context.User.Username} you've already registered for the PRPG. :x:" });
                 return;
             }
 
-            await Context.Channel.SendMessageAsync("", false, new EmbedBuilder() { Title = "== PRPG REGISTRATION [1/4] ==", Description = $"Welcome {(Context.User as IGuildUser).Nickname ?? Context.User.Username} to the PRPG.\n\nRegistration is possible in two ways. Please select an option:\n1. Choose Starter\n2. ~~Personality Quiz~~ [**Disabled**]", Color = Color.Gold, ThumbnailUrl = Context.User.GetAvatarUrl(), Footer = new EmbedFooterBuilder() {Text = "You can always exit registration by typing `exit`" } });
+            await Context.Channel.SendMessageAsync("", false, new EmbedBuilder()
+            {
+                Title = "== PRPG REGISTRATION [1/4] ==",
+                Description = $"Welcome {(Context.User as IGuildUser).Nickname ?? Context.User.Username} to the PRPG.\n\nRegistration is possible in two ways. Please select an option:\n1. Choose Starter\n2. ~~Personality Quiz~~ [**Disabled**]",
+                Color = Color.Gold,
+                ThumbnailUrl = Context.User.GetAvatarUrl(),
+                Footer = new EmbedFooterBuilder() { Text = "You can always exit registration by typing `exit`" }
+            });
 
             Func<SocketMessage, Task> eventHandler = async (e) => await ChooseStarter(e, Context.User.Id);
             Events.Add(Context.User.Id, eventHandler);
@@ -91,7 +98,7 @@ namespace PRPGDiscordBot.Commands
             string msg = arg.Content;
             if (int.TryParse(msg, out int numChoice))
             {
-                if (numChoice < 0 || numChoice > AvailableStarters.Count)
+                if (numChoice <= 0 || numChoice > AvailableStarters.Count)
                 {
                     await (arg as IUserMessage).AddReactionAsync(new Emoji("❌"));
                     return;
@@ -137,7 +144,10 @@ namespace PRPGDiscordBot.Commands
                 }
                 else
                 {
-                    await arg.Channel.SendMessageAsync("There appears to be an error. Please contact an administrator.");
+                    if ((Context.User as IGuildUser).GuildPermissions.Administrator)
+                        await arg.Channel.SendMessageAsync("You dun goofed.");
+                    else
+                        await arg.Channel.SendMessageAsync("There appears to be an error. Please contact an administrator.");
                     (Context.Client as DiscordSocketClient).MessageReceived -= Events[uuid];
                 }
             }
@@ -158,23 +168,27 @@ namespace PRPGDiscordBot.Commands
 
         private async Task<string> CreateStarterPokemonXMLAsync(string starterName)
         {
+            PRPGDiscordBot.Models.Team team = new Models.Team();
+
             PokeAPI.Pokemon p = await DataFetcher.GetNamedApiObject<PokeAPI.Pokemon>(starterName.ToLower());
 
-            Models.Pokemon pokemon = new Models.Pokemon() {ID = p.ID, Level = 5, PokeBallType = Models.PokeBallType.PokeBall, Form = 0, Happiness = 0, Nickname = "", Shiny = false, Status = Models.Status.None};
+            Models.Pokemon pokemon = new Models.Pokemon() { ID = p.ID, Level = 5, PokeBallType = Models.PokeBallType.PokeBall, Form = 0, Happiness = 70, Nickname = "", Shiny = false, Status = Models.Status.None };
             pokemon.Stats = Models.Pokemon.GenerateStarterStats(p);
             pokemon.Moves = Models.Pokemon.GenerateStarterMoves(p);
             pokemon.Ability.Name = p.Abilities[0].Ability.Name;
 
-            return pokemon.Serialize();
+            team.Add(pokemon);
+
+            return team.Serialize();
 
         }
-        
+
         [Command("unregister"), RequireUserPermission(GuildPermission.Administrator)]
         public async Task Unregister(IUser user = null)
         {
             ulong uuid;
 
-            if(user != null)
+            if (user != null)
             {
                 uuid = user.Id;
             }
@@ -197,14 +211,14 @@ namespace PRPGDiscordBot.Commands
             }
             catch (Exception e)
             {
-                await Program.Log(e.ToString(),"",LogSeverity.Error);
+                await Program.Log(e.ToString(), "", LogSeverity.Error);
                 await Context.Message.AddReactionAsync(new Emoji("❌"));
             }
             finally
             {
                 await conn.CloseAsync();
             }
-            
+
         }
         #endregion 
         #endregion

@@ -20,7 +20,7 @@ namespace PRPGDiscordBot.Helpers
             MySqlConnection conn = new MySqlConnection(connStr);
             return conn;
         }
-
+        #region getXMLGeneric
         public static async Task<string> GetXMLFromDatabaseAsync(this MySqlConnection connection, string columnName, string tableName, ulong UUID)
         {
             string xml = "";
@@ -28,7 +28,7 @@ namespace PRPGDiscordBot.Helpers
             {
                 await connection.OpenAsync();
 
-                string cmdString = $"SELECT {columnName} FROM {tableName} WHERE UserID = {UUID}";
+                string cmdString = $"SELECT {columnName} FROM {tableName} WHERE UUID = {UUID}";
                 MySqlCommand cmd = new MySqlCommand(cmdString, connection);
 
                 using (MySqlDataReader reader = (MySqlDataReader)await cmd.ExecuteReaderAsync())
@@ -51,6 +51,7 @@ namespace PRPGDiscordBot.Helpers
 
             return xml;
         }
+#endregion
 
         public static Dictionary<ulong, bool> cachedRegistry = new Dictionary<ulong, bool>();
 
@@ -103,7 +104,7 @@ namespace PRPGDiscordBot.Helpers
 
                 xmlSerializer.Serialize(stringWriter, toSerialize);
                 string str = stringWriter.ToString();
-
+                
                 return str;
             }
             catch (Exception e)

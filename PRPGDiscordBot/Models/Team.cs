@@ -7,13 +7,13 @@ using System.Text;
 namespace PRPGDiscordBot.Models
 {
     [Serializable]
-    public class Team : ITeam, IEnumerable<IPokemon>, ICollection<IPokemon>
+    public class Team : ITeam, IEnumerable<Pokemon>, ICollection<Pokemon>
     {
-        private List<IPokemon> team;
+        private List<Pokemon> team;
 
         public Team()
         {
-            team = new List<IPokemon>();
+            team = new List<Pokemon>();
         }
 
         #region Implementing List components.
@@ -21,7 +21,7 @@ namespace PRPGDiscordBot.Models
 
         public bool IsReadOnly => false;
 
-        public void Add(IPokemon item)
+        public void Add(Pokemon item)
         {
             team.Add(item);
         }
@@ -31,22 +31,22 @@ namespace PRPGDiscordBot.Models
             team.Clear();
         }
 
-        public bool Contains(IPokemon item)
+        public bool Contains(Pokemon item)
         {
             return team.Contains(item);
         }
 
-        public void CopyTo(IPokemon[] array, int arrayIndex)
+        public void CopyTo(Pokemon[] array, int arrayIndex)
         {
             team.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<IPokemon> GetEnumerator()
+        public IEnumerator<Pokemon> GetEnumerator()
         {
             return team.GetEnumerator();
         }
 
-        public bool Remove(IPokemon item)
+        public bool Remove(Pokemon item)
         {
             return team.Remove(item);
         }

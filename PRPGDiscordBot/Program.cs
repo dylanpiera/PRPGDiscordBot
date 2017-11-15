@@ -93,7 +93,9 @@ public class Program
         LogMessage arg = new LogMessage(logSev, source, msg);
         switch (arg.Severity)
         {
-            case LogSeverity.Error: Console.ForegroundColor = ConsoleColor.Red; break;
+            case LogSeverity.Error:
+            case LogSeverity.Critical:
+                Console.ForegroundColor = ConsoleColor.Red; break;
             case LogSeverity.Warning: Console.ForegroundColor = ConsoleColor.Yellow; break;
             case LogSeverity.Debug: Console.ForegroundColor = ConsoleColor.Green; break;
         }
@@ -101,4 +103,6 @@ public class Program
         await Console.Out.WriteLineAsync($"[{DateTime.Now.ToString("hh:mm:ss")}] [{arg.Severity}] [{arg.Source}] {arg.Message}");
         Console.ForegroundColor = ConsoleColor.Gray;
     }
+
+    
 }

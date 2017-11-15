@@ -4,6 +4,8 @@ using System.Text;
 using PokeAPI;
 using System.Linq;
 using System.Threading.Tasks;
+using Discord;
+using PRPGDiscordBot.Commands;
 
 namespace PRPGDiscordBot.Models
 {
@@ -38,7 +40,17 @@ namespace PRPGDiscordBot.Models
                 id = value;
             }
         }
-        public string Nickname { get => nickname; set => nickname = value; }
+        public string Nickname
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(nickname))
+                    return nickname;
+                else
+                    return null;
+            }
+            set => nickname = value;
+        }
         public Ability Ability { get => ability; set => ability = value; }
         public int Level
         {
@@ -65,6 +77,39 @@ namespace PRPGDiscordBot.Models
         }
         public Item HeldItem { get => heldItem; set => heldItem = value; }
         public Moves Moves { get => moves; set => moves = value; }
+
+        public string ToString(string speciesName)
+        {
+            string toReturn;
+            toReturn =
+                $"**Species**\n" +
+                $"_{speciesName.Capatalize()}_\n\n" +
+                $"**Level**\n" +
+                $"{Level}\n\n" +
+                $"**Ability**\n" +
+                $"{Ability.Name}\n\n" +
+                $"**Item**\n" +
+                "None\n\n" + //TODO: $"{HeldItem.ToString()}" +
+                $"**Stats**\n" + //TODO: Fix Spacing
+                $"_HP_:\t{stats.CurHP}/{stats.MaxHP}\n" +
+                $"_Atk_:\t{stats.Atk}\n" +
+                $"_Def_:\t{stats.Def}\n" +
+                $"_Sp.Atk_:\t{stats.SpAtk}\n" +
+                $"_Sp.Def_:\t{stats.SpDef}\n" +
+                $"_Speed_:\t{stats.Speed}\n" +
+                $"_Happiness_:\t{Happiness}\n\n";
+            if (Status != Status.None)
+                toReturn +=
+                    "**Status**\n" +
+                    $"_{Status.ToString()}_\n\n";
+            toReturn += "**Moves**\n";
+            foreach (Move move in Moves)
+            {
+                toReturn += $"{move.Name}\n";
+            }
+
+            return toReturn;
+        }
 
         public static Stats GenerateStarterStats(PokeAPI.Pokemon p)
         {
@@ -95,7 +140,7 @@ namespace PRPGDiscordBot.Models
                 {
                     if (y.VersionGroup.Name == "sun-moon" && y.LearnedAt <= 5 && y.LearnMethod.Name == "level-up")
                     {
-                        moves.Add(new Move() {Name = x.Move.Name });
+                        moves.Add(new Move() { Name = x.Move.Name });
                     }
                 }
             }
