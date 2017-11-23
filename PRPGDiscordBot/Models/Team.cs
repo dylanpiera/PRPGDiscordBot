@@ -7,7 +7,7 @@ using System.Text;
 namespace PRPGDiscordBot.Models
 {
     [Serializable]
-    public class Team : ITeam, IEnumerable<IPokemon>, ICollection<IPokemon>
+    public class Team : IEnumerable<IPokemon>, ICollection<IPokemon>
     {
         private List<IPokemon> team;
 
@@ -56,10 +56,5 @@ namespace PRPGDiscordBot.Models
             return (IEnumerator)GetEnumerator();
         }
         #endregion
-    }
-
-    public interface ITeam
-    {
-
     }
 }
