@@ -13,7 +13,6 @@ namespace PRPGDiscordBot.Models
         public Pokemon()
         {
             ability = new Ability();
-
         }
 
         private int id;
@@ -95,7 +94,7 @@ namespace PRPGDiscordBot.Models
                 {
                     if (y.VersionGroup.Name == "sun-moon" && y.LearnedAt <= 5 && y.LearnMethod.Name == "level-up")
                     {
-                        moves.Add(new Move() {Name = x.Move.Name });
+                        moves.Add(new Move() { Name = x.Move.Name });
                     }
                 }
             }

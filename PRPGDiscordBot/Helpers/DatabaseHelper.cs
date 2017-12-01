@@ -65,7 +65,6 @@ namespace PRPGDiscordBot.Helpers
 
             try
             {
-
                 await connection.OpenAsync();
 
                 string cmdString = $"SELECT COUNT(UUID) FROM Trainers WHERE UUID = '{uuid}'";

@@ -57,7 +57,6 @@ public class Program
             Console.WriteLine("!" + command.Name);
         }
         Console.WriteLine("---");
-
     }
 
     public async Task HandleCommand(SocketMessage arg)

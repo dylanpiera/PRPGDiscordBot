@@ -30,7 +30,7 @@ namespace PRPGDiscordBot.Commands
             {
                 Stopwatch sw = new Stopwatch();
                 sw.Restart();
-                IUserMessage msg =  await Context.Channel.SendMessageAsync("Pong!");
+                IUserMessage msg = await Context.Channel.SendMessageAsync("Pong!");
                 await msg.ModifyAsync(x => x.Content = $"Pong! `ms{sw.ElapsedMilliseconds}`");
                 sw.Stop();
             }
@@ -55,13 +55,10 @@ namespace PRPGDiscordBot.Commands
 
                 string connStr = $"Server={Sneaky.DatabaseUrl};Uid={Sneaky.User};Database=PRPG;port=3306;Password={Sneaky.Password}";
                 MySqlConnection conn = new MySqlConnection(connStr);
+                
+                Pokemon vector = (await conn.GetXMLFromDatabaseAsync("testdata", "players", Context.User.Id)).Deserialize<Pokemon>();
 
-
-                Pokemon vector = (await conn.GetXMLFromDatabaseAsync("testdata","players",Context.User.Id)).Deserialize<Pokemon>();
-
-                //await msg.ModifyAsync(x => x.Content = $"The vector stored in the database is:\n{vector.ToString()}");
                 await this.Purge(vector.Name);
-
             }
 
             [Command("setTest")]
@@ -78,9 +75,7 @@ namespace PRPGDiscordBot.Commands
                     await msg.ModifyAsync(x => x.Content = "Succesfully established connection :white_check_mark:");
 
                     Pokemon pokemon = new Pokemon() { Name = name };
-
-
-
+                    
                     string str = pokemon.Serialize();
 
                     string sql = "UPDATE players SET testdata = @pokemon WHERE UserID = '" + Context.User.Id.ToString() + "'";
