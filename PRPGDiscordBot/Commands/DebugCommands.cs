@@ -13,6 +13,9 @@ using System.Diagnostics;
 
 namespace PRPGDiscordBot.Commands
 {
+    /// <summary>
+    /// Debug test code. Can be removed at some point.
+    /// </summary>
     [Serializable]
     public struct Pokemon
     {
@@ -20,7 +23,9 @@ namespace PRPGDiscordBot.Commands
         public string Url;
     }
 
-
+    /// <summary>
+    /// All the commands in the debug group, are commands where you can check syntax. These commands aren't to be used in any final products.
+    /// </summary>
     [Group("debug")]
     public class DebugCommands : ModuleBase
     {
@@ -170,8 +175,7 @@ namespace PRPGDiscordBot.Commands
             }
         }
     }
-
-
+    
     internal static class FormatHelper
     {
         public static string Capatalize(this string input)

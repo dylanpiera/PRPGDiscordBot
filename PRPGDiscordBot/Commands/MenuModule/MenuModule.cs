@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace PRPGDiscordBot.Commands.Menu
 {
+    /// <summary>
+    /// Big black box. For usage, see contribution guide.
+    /// </summary>
     public class MenuModule : ModuleBase
     {
         public struct MenuStruct
@@ -23,10 +26,14 @@ namespace PRPGDiscordBot.Commands.Menu
             }
         }
 
+        //A dictionary of UserID to MessageReceivedHandler.
         public static Dictionary<ulong, Func<SocketMessage, Task>> Events = new Dictionary<ulong, Func<SocketMessage, Task>>();
 
         public delegate Task giveOptions(SocketMessage socket, DiscordSocketClient client);
 
+        /// <summary>
+        /// Debug test version of the menu system.
+        /// </summary>
         [Command("TestOptions")]
         public async Task TestOptions()
         {
@@ -36,7 +43,7 @@ namespace PRPGDiscordBot.Commands.Menu
                 Events.Remove(Context.User.Id);
                 return;
             }
-
+            
             giveOptions options = OptionGenerator(new Dictionary<Func<string, bool>, MenuStruct>()
             {
                 {ContentValidizer("yes") , new MenuStruct(new EmbedBuilder() {Description = "You answered yes."},
@@ -50,16 +57,31 @@ namespace PRPGDiscordBot.Commands.Menu
             (Context.Client as DiscordSocketClient).MessageReceived += Events[Context.User.Id];
         }
 
+        /// <summary>
+        /// Returns a ContentValidizer that checks if the input is equal to the <paramref name="validizerString"/>
+        /// </summary>
         public static Func<string, bool> ContentValidizer(string validizerString)
         {
             return (s) => s == validizerString;
         }
 
+        /// <summary>
+        /// Returns a UserValidizer that checks if the user ID is the same as the <paramref name="user"/>
+        /// </summary>
         public static Func<ulong, bool> IsSameUserAs(ulong user)
         {
             return (u) => u == user;
         }
 
+        /// <summary>
+        /// Creates a giveOptions
+        /// </summary>
+        /// <param name="contentValidizer"><see cref="ContentValidizer(string)"/></param>
+        /// <param name="userValidizer"><see cref="IsSameUserAs(ulong)"/></param>
+        /// <param name="builder">The message that should be send upon succesfully going through both validizers.</param>
+        /// <param name="endOfChain">is this the last question in this menu queue?</param>
+        /// <param name="next">the next giveOptions in the tree.</param>
+        /// <returns></returns>
         public static giveOptions OptionGenerator(Func<string, bool> contentValidizer, Func<ulong, bool> userValidizer, EmbedBuilder builder = null,  bool endOfChain = true, giveOptions next = null)
         {
             return async (s, c) =>
@@ -87,6 +109,12 @@ namespace PRPGDiscordBot.Commands.Menu
             };
         }
 
+        /// <summary>
+        /// Creates a list of options. WARNING: Not fully implemented yet.
+        /// </summary>
+        /// <param name="dictionary">A dictionary of MessageEventHandlers to MenuStructs. See also: <seealso cref="MenuStruct"/></param>
+        /// <param name="userValidizer"><see cref="IsSameUserAs(ulong)"/></param>
+        /// <param name="endOfChain">not implemented yet.</param>
         public static giveOptions OptionGenerator(Dictionary<Func<string,bool>, MenuStruct> dictionary, Func<ulong, bool> userValidizer, bool endOfChain = true)
         {
             return async (s, c) =>

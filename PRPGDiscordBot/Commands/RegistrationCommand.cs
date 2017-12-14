@@ -14,10 +14,19 @@ namespace PRPGDiscordBot.Commands
 {
     public class RegistrationCommand : ModuleBase
     {
+        //A dictionary of UserID to MessageReceivedHandler.
         public static Dictionary<ulong, Func<SocketMessage, Task>> Events = new Dictionary<ulong, Func<SocketMessage, Task>>();
 
+        //string list of available starters, any added work immediatly.
         public static readonly List<string> AvailableStarters = new List<string> { "Bulbasaur", "Squirtle", "Charmander", "Pikachu", "Eevee" };
 
+        /// <summary>
+        /// <para>TL;DR - A lot of MessageReceived listeners that walk you through registration.</para>
+        /// <para>
+        /// Basically all these methods do the same thing. They show a message, and then add the next event listener in the chain, to await for the next response.
+        /// There's also a lot of EmbedBuilders, if y'all want an explanation on how to use those, I'll post one in the contribution guide.
+        /// </para>
+        /// </summary>
         #region RegisterCommand
         [Command("Register")]
         public async Task Register()
@@ -223,7 +232,5 @@ namespace PRPGDiscordBot.Commands
         }
         #endregion 
         #endregion
-
-
     }
 }

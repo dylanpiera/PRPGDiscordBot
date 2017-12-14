@@ -9,6 +9,9 @@ using System.Xml.Serialization;
 
 namespace PRPGDiscordBot.Helpers
 {
+    /// <summary>
+    /// A few generic database helpers.
+    /// </summary>
     public static partial class DatabaseHelper
     {
         /// <summary>
@@ -20,7 +23,17 @@ namespace PRPGDiscordBot.Helpers
             MySqlConnection conn = new MySqlConnection(connStr);
             return conn;
         }
+
         #region getXMLGeneric
+        /// <summary>
+        /// Executes the following query to fetch XMl from the database:
+        /// <para>SELECT <paramref name="columnName"/> FROM <paramref name="tableName"/> WHERE UUID = <paramref name="UUID"/></para>
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="columnName"></param>
+        /// <param name="tableName"></param>
+        /// <param name="UUID"></param>
+        /// <returns></returns>
         public static async Task<string> GetXMLFromDatabaseAsync(this MySqlConnection connection, string columnName, string tableName, ulong UUID)
         {
             string xml = "";
@@ -53,8 +66,15 @@ namespace PRPGDiscordBot.Helpers
         }
 #endregion
 
+        //Stores wheter a user is registered after checking it once.
         public static Dictionary<ulong, bool> cachedRegistry = new Dictionary<ulong, bool>();
 
+        /// <summary>
+        /// Checks if a user is registered, if performed before will use the <seealso cref="cachedRegistry"/> instead of checking the DB.
+        /// </summary>
+        /// <param name="connection"><see cref="GetClosedConnection"/></param>
+        /// <param name="uuid">The user's ID.</param>
+        /// <returns></returns>
         public static async Task<bool> IsUserRegistered(this MySqlConnection connection, ulong uuid)
         {
             if (cachedRegistry.ContainsKey(uuid))
@@ -66,7 +86,6 @@ namespace PRPGDiscordBot.Helpers
 
             try
             {
-
                 await connection.OpenAsync();
 
                 string cmdString = $"SELECT COUNT(UUID) FROM Trainers WHERE UUID = '{uuid}'";
@@ -93,6 +112,9 @@ namespace PRPGDiscordBot.Helpers
         }
     }
 
+    /// <summary>
+    /// XML Tools for Serialization & Deserialization.
+    /// </summary>
     public static class XMLHelper
     {
         public static string Serialize<T>(this T toSerialize)

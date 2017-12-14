@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace PRPGDiscordBot.Commands
 {
+    //TODO: Ongoing Testing - To be commented later, once fully implemented.
     public class TeamCommands : ModuleBase
     {
         public static bool Private = false;
