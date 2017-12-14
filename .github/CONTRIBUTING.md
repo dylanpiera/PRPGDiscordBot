@@ -7,21 +7,21 @@ These are mostly guidelines, not rules. Use your best judgement, and feel free t
 
 
 ### Table of Contents
-[What should I know before I get started?](#What-should-I-know-before-I-get-started?)
+[What should I know before I get started?](#what-should-i-know-before-i-get-started)
 
-[How Can I Contribute?](#How-Can-I-Contribute?)
-* [Reporting Bugs](#Reporting-Bugs)
-* [Suggesting Enhancements](#Suggesting-Enhancements)
-* [Your First Code Contribution](#Your-First-Code-Contribution)
+[How Can I Contribute?](#how-can-i-contribute?)
+* [Reporting Bugs](#reporting-bugs)
+* [Suggesting Enhancements](#suggesting-enhancements)
+* [Your First Code Contribution](#your-first-code-contribution)
 
-[Styleguides](#)
+[Styleguides](#styleguides)
 
 
 ## What should I know before I get started?
 Before starting to work on this project, you need to make sure to categorize under one of the following types of contributors:
-* [PRPG Developer](#PRPG-Developer) - Has a profound understanding of [C#](https://docs.microsoft.com/en-us/dotnet/csharp/getting-started/) or [Discord.NET](https://github.com/RogueException/Discord.Net) and actively is able to program parts of the bot without much guidance.
-* [PRPG Contributor](#PRPG-Contributor) - You can navigate the code and fix small errors, like typos. Or are able to create small commands with the power of copy paste.
-* [PRPG Tester](#PRPG-Tester) - You are here to help us test, not to program or even look at the code.
+* [PRPG Developer](#prpg-developer) - Has a profound understanding of [C#](https://docs.microsoft.com/en-us/dotnet/csharp/getting-started/) or [Discord.NET](https://github.com/RogueException/Discord.Net) and actively is able to program parts of the bot without much guidance.
+* [PRPG Contributor](#prpg-contributor) - You can navigate the code and fix small errors, like typos. Or are able to create small commands with the power of copy paste.
+* [PRPG Tester](#prpg-tester) - You are here to help us test, not to program or even look at the code.
 
 ### PRPG Developer
 Hello, and welcome yet again. The PRPG Developers are a rare breed to come by, so I'm really grateful you've decided to help us out with the project!
