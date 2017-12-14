@@ -113,7 +113,7 @@ static public class Sneaky
     public static string Password { get => password; }
 }
 ```
-After this you can fill in your credentials. If you are unaware what your Bot Token is or haven't created a bot account yet. Please follow [this](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) tutorial. 
+After this you can fill in your credentials. If you are unaware what your Bot Token is or haven't created a bot account yet, please follow [this](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) tutorial. 
 If you do not have Database credentials, you will need to request these with Dylan. These credentials aren't given out freely, and only to long-time PRPG Developers. _Please request your changes to be tested on the public test bot if you need to use the database._
 
 #### Pull Requests
