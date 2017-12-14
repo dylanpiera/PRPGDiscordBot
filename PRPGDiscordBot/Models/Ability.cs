@@ -1,10 +1,18 @@
 ﻿using System;
+using PRPGDiscordBot.Helpers;
+using PRPGDiscordBot.Commands;
 
 namespace PRPGDiscordBot.Models
 {
     [Serializable]
     public class Ability
     {
-        public string Name { get; set; }
+        private string name;
+        public string Name { get => this.Format(name); set => name = value; }
+
+        public string Format(string toFormat)
+        {
+            return toFormat.Replace("-", " ").Capatalize();
+        }
     }
 }

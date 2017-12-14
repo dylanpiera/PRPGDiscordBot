@@ -6,8 +6,18 @@ using System.Threading.Tasks;
 
 namespace PRPGDiscordBot.Helpers
 {
+    /// <summary>
+    /// Pokemon specific database helpers.
+    /// </summary>
     public static partial class DatabaseHelper
     {
+        /// <summary>
+        /// Registers a user into the PRPG.
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="uuid">The users ID</param>
+        /// <param name="starterXML">The starter pokemon (in a team) in XML form.</param>
+        /// <returns></returns>
         public static async Task<bool> RegisterUser(this MySqlConnection connection, ulong uuid, string starterXML)
         {
             bool success;
