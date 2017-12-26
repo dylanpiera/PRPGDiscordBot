@@ -3,7 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using MySql.Data.MySqlClient;
 using PokeAPI;
-using PRPGDiscordBot.Commands.Menu;
+using PRPGDiscordBot.Commands.MenuModule;
 using PRPGDiscordBot.Helpers;
 using System;
 using System.Collections.Generic;
@@ -17,39 +17,41 @@ namespace PRPGDiscordBot.Commands
     {
         public static bool Private = false;
 
-        [Command("team")]
-        public async Task TeamMenu()
-        {
-            MySqlConnection conn = DatabaseHelper.GetClosedConnection();
+        /// DEPRECATED
+        /// TODO: Re-Implement
+        //[Command("team")]
+        //public async Task TeamMenu()
+        //{
+        //    MySqlConnection conn = DatabaseHelper.GetClosedConnection();
 
-            if (!await conn.IsUserRegistered(Context.User.Id))
-                return;
+        //    if (!await conn.IsUserRegistered(Context.User.Id))
+        //        return;
 
-            IUserMessage msg;
+        //    IUserMessage msg;
 
-            if (Private)
-                msg = await (await Context.User.GetOrCreateDMChannelAsync()).SendMessageAsync("Loading Data...");
-            else
-                msg = await Context.Channel.SendMessageAsync("Loading Data...");
+        //    if (Private)
+        //        msg = await (await Context.User.GetOrCreateDMChannelAsync()).SendMessageAsync("Loading Data...");
+        //    else
+        //        msg = await Context.Channel.SendMessageAsync("Loading Data...");
 
-            Func<SocketMessage, Task> eventHandler = async s => await (MenuModule.OptionGenerator(
-                    new Dictionary<Func<string, bool>, MenuModule.MenuStruct> {
-                        {MenuModule.ContentValidizer("1"), new MenuModule.MenuStruct(await GetFirstPokemon())},
-                        {MenuModule.ContentValidizer("2"), new MenuModule.MenuStruct() }
-                    },
-                    MenuModule.IsSameUserAs(Context.User.Id)
-                )(s,Context.Client as DiscordSocketClient));
-            MenuModule.Events.Add(Context.User.Id, eventHandler);
-            (Context.Client as DiscordSocketClient).MessageReceived += MenuModule.Events[Context.User.Id];
+        //    Func<SocketMessage, Task> eventHandler = async s => await (MenuModule.OptionGenerator(
+        //            new Dictionary<Func<string, bool>, MenuModule.MenuStruct> {
+        //                {MenuModule.ContentValidizer("1"), new MenuModule.MenuStruct(await GetFirstPokemon())},
+        //                {MenuModule.ContentValidizer("2"), new MenuModule.MenuStruct() }
+        //            },
+        //            MenuModule.IsSameUserAs(Context.User.Id)
+        //        )(s,Context.Client as DiscordSocketClient));
+        //    MenuModule.Events.Add(Context.User.Id, eventHandler);
+        //    (Context.Client as DiscordSocketClient).MessageReceived += MenuModule.Events[Context.User.Id];
 
-            await msg.ModifyAsync(x => x.Embed = new EmbedBuilder()
-            {
-                Title = "Team Manager",
-                Description = "Welcome to the team manager, what would you like to do:\n" +
-                "1. view first pokemon in party\n" +
-                "2. exit"
-            }.Build());
-        }
+        //    await msg.ModifyAsync(x => x.Embed = new EmbedBuilder()
+        //    {
+        //        Title = "Team Manager",
+        //        Description = "Welcome to the team manager, what would you like to do:\n" +
+        //        "1. view first pokemon in party\n" +
+        //        "2. exit"
+        //    }.Build());
+        //}
 
         private async Task<EmbedBuilder> GetFirstPokemon()
         {

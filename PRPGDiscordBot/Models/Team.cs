@@ -7,7 +7,7 @@ using System.Text;
 namespace PRPGDiscordBot.Models
 {
     [Serializable]
-    public class Team : IEnumerable<IPokemon>, ICollection<IPokemon>
+    public class Team : IEnumerable<Pokemon>, ICollection<Pokemon>
     {
         private List<Pokemon> team;
 

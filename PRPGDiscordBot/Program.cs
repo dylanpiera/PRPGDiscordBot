@@ -6,6 +6,7 @@ using Discord.WebSocket;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using PokeAPI;
+using Discord.Addons.Interactive;
 
 public class Program
 {
@@ -38,12 +39,13 @@ public class Program
         _client.Log += Log;
         _client.Ready += Ready;
 
-        services = new ServiceCollection().BuildServiceProvider();
+        services = new ServiceCollection().AddSingleton(_client).AddSingleton<InteractiveService>().BuildServiceProvider();
 
         await InstallCommands();
 
         //For an explanation on how to set up your own Sneaky file, please check the Contribution Guide, or project Readme.
         await _client.LoginAsync(TokenType.Bot, Sneaky.Token);
+        await Log("Booting version 0.2.1","Bootup",LogSeverity.Info);
         await _client.StartAsync();
 
         await Task.Delay(-1);
@@ -84,7 +86,7 @@ public class Program
 
         if (!(message.HasCharPrefix('!', ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
 
-        var context = new CommandContext(_client, message);
+        var context = new SocketCommandContext(_client, message);
 
         var result = await commands.ExecuteAsync(context, argPos, services);
         if (!result.IsSuccess) Console.WriteLine(result.ErrorReason);
