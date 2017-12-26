@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using MySql.Data.MySqlClient;
@@ -13,45 +14,36 @@ using System.Threading.Tasks;
 namespace PRPGDiscordBot.Commands
 {
     //TODO: Ongoing Testing - To be commented later, once fully implemented.
-    public class TeamCommands : ModuleBase
+    public class TeamCommands : InteractiveBase
     {
         public static bool Private = false;
 
-        /// DEPRECATED
-        /// TODO: Re-Implement
-        //[Command("team")]
-        //public async Task TeamMenu()
-        //{
-        //    MySqlConnection conn = DatabaseHelper.GetClosedConnection();
+        [Command("team", RunMode = RunMode.Async)]
+        public async Task Team()
+        {
+            MySqlConnection conn = DatabaseHelper.GetClosedConnection();
 
-        //    if (!await conn.IsUserRegistered(Context.User.Id))
-        //        return;
+            if (!await conn.IsUserRegistered(Context.User.Id))
+                return;
 
-        //    IUserMessage msg;
+            await Context.Channel.TriggerTypingAsync();
 
-        //    if (Private)
-        //        msg = await (await Context.User.GetOrCreateDMChannelAsync()).SendMessageAsync("Loading Data...");
-        //    else
-        //        msg = await Context.Channel.SendMessageAsync("Loading Data...");
+            string p = await GetFirstPokemonString();
+            Program.Log(p);
 
-        //    Func<SocketMessage, Task> eventHandler = async s => await (MenuModule.OptionGenerator(
-        //            new Dictionary<Func<string, bool>, MenuModule.MenuStruct> {
-        //                {MenuModule.ContentValidizer("1"), new MenuModule.MenuStruct(await GetFirstPokemon())},
-        //                {MenuModule.ContentValidizer("2"), new MenuModule.MenuStruct() }
-        //            },
-        //            MenuModule.IsSameUserAs(Context.User.Id)
-        //        )(s,Context.Client as DiscordSocketClient));
-        //    MenuModule.Events.Add(Context.User.Id, eventHandler);
-        //    (Context.Client as DiscordSocketClient).MessageReceived += MenuModule.Events[Context.User.Id];
+            List<string> pages = new List<string>() { "\n" + p, "Pokemon 2", "Pokemon 3", "Pokemon 4", "Pokemon 5", "Pokemon 6" };
 
-        //    await msg.ModifyAsync(x => x.Embed = new EmbedBuilder()
-        //    {
-        //        Title = "Team Manager",
-        //        Description = "Welcome to the team manager, what would you like to do:\n" +
-        //        "1. view first pokemon in party\n" +
-        //        "2. exit"
-        //    }.Build());
-        //}
+            PaginatedMessage paginatedMessage = new PaginatedMessage()
+            {
+                Pages = pages,
+                Color = Color.LightGrey,
+                Options = new PaginatedAppearanceOptions() { DisplayInformationIcon = false, JumpDisplayOptions = JumpDisplayOptions.Never},
+                Title = $"{Context.User.Username}'s Team",
+                Content = ""               
+            };
+
+        await PagedReplyAsync(paginatedMessage);
+        }
 
         private async Task<EmbedBuilder> GetFirstPokemon()
         {
@@ -70,8 +62,15 @@ namespace PRPGDiscordBot.Commands
             return builder;
         }
 
+        private async Task<string> GetFirstPokemonString()
+        {
+            Models.Team t = (await DatabaseHelper.GetClosedConnection().GetXMLFromDatabaseAsync("Team", "Trainers", Context.User.Id)).Deserialize<Models.Team>();
+            Models.Pokemon p = t.First();
+            return p.ToString((await DataFetcher.GetApiObject<PokeAPI.Pokemon>(p.ID)).Name);
+        }
+
         [Command("pokemon")]
-        public async Task Team()
+        public async Task Pokemon()
         {
             MySqlConnection conn = DatabaseHelper.GetClosedConnection();
 
